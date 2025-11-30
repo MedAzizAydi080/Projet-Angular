@@ -33,6 +33,21 @@ export class ProductService {
     );
   }
 
+  searchProducts(term: string): Observable<Product[]> {
+    const searchTerm = term.toLowerCase().trim();
+    if (!searchTerm) {
+      return this.getAll();
+    }
+    return this.getAll().pipe(
+      map((products) =>
+        products.filter((p) =>
+          p.name.toLowerCase().includes(searchTerm) ||
+          p.description.toLowerCase().includes(searchTerm)
+        )
+      )
+    );
+  }
+
   getById(id: string): Observable<Product | undefined> {
     if (this.productsCache.length > 0) {
       const product = this.productsCache.find((p) => p.id === id);

@@ -1,0 +1,496 @@
+<main class="bg-white py-8 antialiased md:py-16">
+  <section class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <!-- Header Section - matching home page style -->
+    <div class="text-center mb-8">
+      <h1 class="text-gray-950 font-bold text-3xl sm:text-4xl mb-2">
+        Gift Cards
+      </h1>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">
+        Give the gift of choice. Perfect for any occasion, our gift cards let them pick exactly what they want.
+      </p>
+    </div>
+
+    <!-- Tabs Navigation - styled like cart sidebar cards -->
+    <div class="flex justify-center mb-8">
+      <div class="inline-flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
+        <button
+          (click)="activeTab = 'browse'"
+          class="px-4 py-2 text-sm font-medium rounded-md transition-colors"
+          [class.bg-yellow-400]="activeTab === 'browse'"
+          [class.text-white]="activeTab === 'browse'"
+          [class.text-gray-500]="activeTab !== 'browse'"
+          [class.hover:text-gray-700]="activeTab !== 'browse'"
+        >
+          Browse Cards
+        </button>
+        <button
+          (click)="activeTab = 'my-cards'"
+          class="px-4 py-2 text-sm font-medium rounded-md transition-colors"
+          [class.bg-yellow-400]="activeTab === 'my-cards'"
+          [class.text-white]="activeTab === 'my-cards'"
+          [class.text-gray-500]="activeTab !== 'my-cards'"
+          [class.hover:text-gray-700]="activeTab !== 'my-cards'"
+        >
+          My Gift Cards
+        </button>
+        <button
+          (click)="activeTab = 'redeem'"
+          class="px-4 py-2 text-sm font-medium rounded-md transition-colors"
+          [class.bg-yellow-400]="activeTab === 'redeem'"
+          [class.text-white]="activeTab === 'redeem'"
+          [class.text-gray-500]="activeTab !== 'redeem'"
+          [class.hover:text-gray-700]="activeTab !== 'redeem'"
+        >
+          Redeem
+        </button>
+      </div>
+    </div>
+
+    <!-- Browse Cards Tab -->
+    @if (activeTab === 'browse') {
+    <div>
+      <!-- Category Filter - pill style -->
+      <div class="flex justify-center flex-wrap gap-2 mb-8">
+        @for (category of categories; track category.value) {
+        <button
+          (click)="filterByCategory(category.value)"
+          class="px-4 py-2 rounded-md text-sm font-medium border transition-colors"
+          [class.bg-yellow-400]="selectedCategory === category.value"
+          [class.text-white]="selectedCategory === category.value"
+          [class.border-yellow-400]="selectedCategory === category.value"
+          [class.bg-white]="selectedCategory !== category.value"
+          [class.text-gray-700]="selectedCategory !== category.value"
+          [class.border-gray-300]="selectedCategory !== category.value"
+          [class.hover:border-gray-400]="selectedCategory !== category.value"
+        >
+          {{ category.label }}
+        </button>
+        }
+      </div>
+
+      <!-- Gift Cards Grid - matching home product cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @for (card of giftCards$ | async; track card.id) {
+        <div 
+          class="bg-white rounded-md border border-gray-300 shadow-md p-4 flex flex-col transition-transform hover:scale-105 cursor-pointer"
+          (click)="openPurchaseModal(card)"
+        >
+          <!-- Card Preview -->
+          <div class="h-36 bg-gradient-to-br {{ card.backgroundColor }} rounded-md p-4 relative overflow-hidden mb-4">
+            <!-- Decorative circles -->
+            <div class="absolute -right-6 -top-6 w-20 h-20 bg-white/10 rounded-full"></div>
+            <div class="absolute -left-3 -bottom-3 w-16 h-16 bg-white/10 rounded-full"></div>
+            
+            <div class="relative z-10 h-full flex flex-col justify-between">
+              <div class="flex justify-between items-start">
+                <span class="text-white/80 text-xs font-medium uppercase tracking-wide">Gift Card</span>
+                <svg class="w-6 h-6 text-white/80" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+                </svg>
+              </div>
+              <h3 class="text-white text-lg font-bold">{{ card.name }}</h3>
+            </div>
+          </div>
+
+          <!-- Card Info -->
+          <div class="flex flex-col flex-grow">
+            <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ card.description }}</p>
+            
+            <div class="flex flex-wrap gap-1 mb-3">
+              @for (amount of card.availableAmounts.slice(0, 3); track amount) {
+              <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">
+                {{ amount | tndCurrency }}
+              </span>
+              }
+              @if (card.availableAmounts.length > 3) {
+              <span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">
+                +{{ card.availableAmounts.length - 3 }}
+              </span>
+              }
+            </div>
+
+            <div class="mt-auto">
+              <div class="flex items-baseline gap-1 font-bold mb-2">
+                <span class="text-gray-950 text-xl">From {{ card.availableAmounts[0] | tndCurrency }}</span>
+              </div>
+              <button
+                class="w-full flex items-center justify-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-yellow-200"
+              >
+                Purchase
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- My Gift Cards Tab -->
+    @if (activeTab === 'my-cards') {
+    <div>
+      @if (myGiftCards$ | async; as myCards) {
+        @if (myCards.length === 0) {
+        <div class="flex flex-col mx-auto text-center py-12">
+          <div class="relative size-48 mx-auto mb-4">
+            <svg class="w-full h-full text-gray-200" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+            </svg>
+          </div>
+          <h2 class="text-center font-bold text-2xl text-gray-950 mb-2">No Gift Cards Yet</h2>
+          <p class="text-center text-gray-500 max-w-80 mx-auto mb-4">
+            You haven't purchased any gift cards.
+            <a
+              (click)="activeTab = 'browse'"
+              class="inline-flex items-center gap-1 text-sm font-medium text-yellow-400 underline hover:no-underline cursor-pointer"
+            >
+              Browse our collection
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </p>
+        </div>
+        } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (purchasedCard of myCards; track purchasedCard.id) {
+          <div class="bg-white rounded-md border border-gray-300 shadow-md overflow-hidden">
+            <!-- Card header with gradient -->
+            <div class="h-24 bg-gradient-to-br {{ purchasedCard.giftCard.backgroundColor }} p-4 relative">
+              <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full"></div>
+              <div class="relative z-10 flex justify-between items-start h-full">
+                <div>
+                  <span class="text-white/80 text-xs uppercase tracking-wide">{{ purchasedCard.giftCard.name }}</span>
+                  <p class="text-white text-2xl font-bold mt-1">{{ purchasedCard.amount | tndCurrency }}</p>
+                </div>
+                @if (purchasedCard.isRedeemed) {
+                <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Redeemed</span>
+                } @else {
+                <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Active</span>
+                }
+              </div>
+            </div>
+            <!-- Card body -->
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-gray-500">Card Code</span>
+                <button
+                  (click)="copyToClipboard(purchasedCard.code)"
+                  class="text-yellow-400 hover:text-yellow-500 text-xs font-medium"
+                >
+                  Copy
+                </button>
+              </div>
+              <code class="block bg-gray-50 border border-gray-200 px-3 py-2 rounded text-sm font-mono text-gray-800 mb-3">
+                {{ purchasedCard.code }}
+              </code>
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>Purchased: {{ purchasedCard.purchaseDate | date:'mediumDate' }}</span>
+                <span>Expires: {{ purchasedCard.expiryDate | date:'mediumDate' }}</span>
+              </div>
+              @if (purchasedCard.recipientName) {
+              <div class="mt-3 pt-3 border-t border-gray-200">
+                <p class="text-xs text-gray-500">
+                  For: <span class="text-gray-700 font-medium">{{ purchasedCard.recipientName }}</span>
+                </p>
+                @if (purchasedCard.message) {
+                <p class="text-xs text-gray-500 mt-1 italic">"{{ purchasedCard.message }}"</p>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+      }
+    </div>
+    }
+
+    <!-- Redeem Tab -->
+    @if (activeTab === 'redeem') {
+    <div class="max-w-md mx-auto">
+      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div class="text-center mb-6">
+          <div class="size-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-1">Redeem Your Gift Card</h2>
+          <p class="text-gray-500 text-sm">Enter your gift card code below to add the balance to your account.</p>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-900">Gift Card Code</label>
+            <input
+              type="text"
+              [(ngModel)]="redeemCode"
+              placeholder="XXXX-XXXX-XXXX-XXXX"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-yellow-400 focus:ring-yellow-400 font-mono text-center uppercase"
+              [disabled]="isRedeeming"
+            />
+          </div>
+
+          @if (redeemResult) {
+          <div
+            class="p-3 rounded-lg border"
+            [class.bg-green-50]="redeemResult.success"
+            [class.border-green-200]="redeemResult.success"
+            [class.bg-red-50]="!redeemResult.success"
+            [class.border-red-200]="!redeemResult.success"
+          >
+            <p class="text-sm" [class.text-green-700]="redeemResult.success" [class.text-red-700]="!redeemResult.success">
+              {{ redeemResult.message }}
+            </p>
+          </div>
+          }
+
+          <button
+            (click)="redeemGiftCard()"
+            [disabled]="isRedeeming || !redeemCode.trim()"
+            class="flex w-full items-center justify-center rounded-lg bg-yellow-400 px-5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-yellow-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            @if (isRedeeming) {
+            <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Redeeming...
+            } @else {
+            Redeem Gift Card
+            }
+          </button>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <p class="text-sm font-medium text-gray-700 mb-2">Where to find your code?</p>
+          <ul class="text-sm text-gray-500 space-y-1">
+            <li>• Check the email you received when the gift card was purchased</li>
+            <li>• Look in the "My Gift Cards" section if you purchased it yourself</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    }
+  </section>
+
+  <!-- Purchase Modal -->
+  @if (showPurchaseModal && selectedCard) {
+  <div class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 bg-black/50 transition-opacity" (click)="closePurchaseModal()"></div>
+
+      <!-- Modal - styled like cart cards -->
+      <div class="relative bg-white rounded-lg border border-gray-200 shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+        @if (!purchaseSuccess) {
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-900">Purchase Gift Card</h3>
+          <button (click)="closePurchaseModal()" class="text-gray-400 hover:text-gray-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-4 space-y-5">
+          <!-- Card Preview -->
+          <div class="h-28 bg-gradient-to-br {{ selectedCard.backgroundColor }} rounded-md p-4 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full"></div>
+            <div class="relative z-10 h-full flex flex-col justify-between">
+              <span class="text-white/80 text-xs uppercase tracking-wide">{{ selectedCard.name }}</span>
+              <p class="text-white text-2xl font-bold">{{ getFinalAmount() | tndCurrency }}</p>
+            </div>
+          </div>
+
+          <!-- Amount Selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-900 mb-2">Select Amount</label>
+            <div class="flex flex-wrap gap-2">
+              @for (amount of selectedCard.availableAmounts; track amount) {
+              <button
+                (click)="selectAmount(amount)"
+                class="px-3 py-1.5 rounded-md border text-sm font-medium transition-colors"
+                [class.border-yellow-400]="selectedAmount === amount && !useCustomAmount"
+                [class.bg-yellow-50]="selectedAmount === amount && !useCustomAmount"
+                [class.text-yellow-700]="selectedAmount === amount && !useCustomAmount"
+                [class.border-gray-300]="selectedAmount !== amount || useCustomAmount"
+                [class.text-gray-700]="selectedAmount !== amount || useCustomAmount"
+              >
+                {{ amount | tndCurrency }}
+              </button>
+              }
+              @if (selectedCard.customAmountRange) {
+              <button
+                (click)="toggleCustomAmount()"
+                class="px-3 py-1.5 rounded-md border text-sm font-medium transition-colors"
+                [class.border-yellow-400]="useCustomAmount"
+                [class.bg-yellow-50]="useCustomAmount"
+                [class.text-yellow-700]="useCustomAmount"
+                [class.border-gray-300]="!useCustomAmount"
+                [class.text-gray-700]="!useCustomAmount"
+              >
+                Custom
+              </button>
+              }
+            </div>
+            @if (useCustomAmount && selectedCard.customAmountRange) {
+            <div class="mt-2">
+              <input
+                type="number"
+                [(ngModel)]="customAmount"
+                [min]="selectedCard.customAmountRange.min"
+                [max]="selectedCard.customAmountRange.max"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-yellow-400 focus:border-yellow-400"
+                placeholder="Enter amount"
+              />
+              <p class="text-xs text-gray-500 mt-1">
+                Min: {{ selectedCard.customAmountRange.min | tndCurrency }} - Max: {{ selectedCard.customAmountRange.max | tndCurrency }}
+              </p>
+            </div>
+            }
+          </div>
+
+          <!-- Delivery Method -->
+          <div>
+            <label class="block text-sm font-medium text-gray-900 mb-2">Delivery Method</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                (click)="deliveryMethod = 'email'"
+                class="p-3 rounded-md border text-left transition-colors"
+                [class.border-yellow-400]="deliveryMethod === 'email'"
+                [class.bg-yellow-50]="deliveryMethod === 'email'"
+                [class.border-gray-300]="deliveryMethod !== 'email'"
+              >
+                <span class="font-medium text-sm" [class.text-yellow-700]="deliveryMethod === 'email'" [class.text-gray-700]="deliveryMethod !== 'email'">Email</span>
+                <p class="text-xs text-gray-500 mt-0.5">Send to recipient</p>
+              </button>
+              <button
+                (click)="deliveryMethod = 'print'"
+                class="p-3 rounded-md border text-left transition-colors"
+                [class.border-yellow-400]="deliveryMethod === 'print'"
+                [class.bg-yellow-50]="deliveryMethod === 'print'"
+                [class.border-gray-300]="deliveryMethod !== 'print'"
+              >
+                <span class="font-medium text-sm" [class.text-yellow-700]="deliveryMethod === 'print'" [class.text-gray-700]="deliveryMethod !== 'print'">Print</span>
+                <p class="text-xs text-gray-500 mt-0.5">Give in person</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Recipient Info (for email) -->
+          @if (deliveryMethod === 'email') {
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-1">Recipient's Name</label>
+              <input
+                type="text"
+                [(ngModel)]="recipientName"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-yellow-400 focus:border-yellow-400 bg-gray-50"
+                placeholder="Enter recipient's name"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-1">Recipient's Email</label>
+              <input
+                type="email"
+                [(ngModel)]="recipientEmail"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-yellow-400 focus:border-yellow-400 bg-gray-50"
+                placeholder="Enter recipient's email"
+              />
+            </div>
+          </div>
+          }
+
+          <!-- Sender & Message -->
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-1">Your Name</label>
+              <input
+                type="text"
+                [(ngModel)]="senderName"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-yellow-400 focus:border-yellow-400 bg-gray-50"
+                placeholder="Enter your name"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-1">Personal Message <span class="text-gray-400 font-normal">(Optional)</span></label>
+              <textarea
+                [(ngModel)]="personalMessage"
+                rows="2"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-yellow-400 focus:border-yellow-400 bg-gray-50 resize-none"
+                placeholder="Add a personal message..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
+          <button
+            (click)="purchaseGiftCard()"
+            [disabled]="isPurchasing || !isFormValid()"
+            class="flex w-full items-center justify-center rounded-lg bg-yellow-400 px-5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-yellow-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            @if (isPurchasing) {
+            <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Processing...
+            } @else {
+            Purchase for {{ getFinalAmount() | tndCurrency }}
+            }
+          </button>
+        </div>
+        } @else {
+        <!-- Success State -->
+        <div class="p-6 text-center">
+          <div class="size-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-1">Gift Card Purchased!</h3>
+          <p class="text-gray-500 text-sm mb-4">Your gift card has been successfully created.</p>
+          
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+            <p class="text-xs text-gray-500 mb-1">Gift Card Code</p>
+            <div class="flex items-center justify-center gap-2">
+              <code class="text-base font-mono font-bold text-gray-900">{{ purchasedCardCode }}</code>
+              <button
+                (click)="copyToClipboard(purchasedCardCode)"
+                class="text-yellow-400 hover:text-yellow-500"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button
+              (click)="activeTab = 'my-cards'; closePurchaseModal()"
+              class="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              View My Cards
+            </button>
+            <button
+              (click)="closePurchaseModal()"
+              class="flex-1 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-medium text-white focus:ring-4 focus:ring-yellow-200"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</main>

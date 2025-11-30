@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "amazon-frontend": {
+    "sfaxstore": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/amazon-frontend",
+            "outputPath": "dist/sfaxstore",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "amazon-frontend:build:production"
+              "buildTarget": "sfaxstore:build:production"
             },
             "development": {
-              "buildTarget": "amazon-frontend:build:development"
+              "buildTarget": "sfaxstore:build:development"
             }
           },
           "defaultConfiguration": "development"

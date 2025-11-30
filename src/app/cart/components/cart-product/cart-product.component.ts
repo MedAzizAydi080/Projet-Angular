@@ -1,10 +1,10 @@
 import { Component, input, OnInit, output } from '@angular/core';
 import { CartProduct } from '../../../shared/models/cart-product';
-import { CurrencyPipe } from '@angular/common';
+import { TndCurrencyPipe } from '../../../shared/pipes/tnd-currency.pipe';
 
 @Component({
   selector: 'app-cart-product',
-  imports: [CurrencyPipe],
+  imports: [TndCurrencyPipe],
   templateUrl: './cart-product.component.html',
 })
 export class CartProductComponent implements OnInit {

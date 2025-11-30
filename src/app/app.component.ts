@@ -10,7 +10,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-  title = 'amazon-frontend';
+  title = 'SfaxStore';
 
   ngOnInit(): void {
     setTimeout(() => {

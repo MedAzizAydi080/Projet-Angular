@@ -1,1 +1,467 @@
-<p>checkout page</p>
+<main class="bg-gray-50 py-8 antialiased md:py-16 min-h-screen">
+  <section class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Checkout</h1>
+      <p class="mt-2 text-gray-500">Complete your order by filling in the details below.</p>
+    </div>
+
+    @if (state$ | async; as state) {
+    <!-- Progress Steps -->
+    <div class="mb-8">
+      <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 sm:text-base">
+        <li
+          class="flex md:w-full items-center sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10"
+          [class.text-yellow-500]="currentStep >= 1"
+        >
+          <span
+            class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full mr-2"
+              [class.bg-yellow-400]="currentStep >= 1"
+              [class.text-white]="currentStep >= 1"
+              [class.bg-gray-200]="currentStep < 1"
+            >
+              @if (currentStep > 1) {
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              } @else { 1 }
+            </span>
+            Shipping
+          </span>
+        </li>
+        <li
+          class="flex items-center"
+          [class.text-yellow-500]="currentStep >= 2"
+        >
+          <span
+            class="flex items-center justify-center w-8 h-8 rounded-full mr-2"
+            [class.bg-yellow-400]="currentStep >= 2"
+            [class.text-white]="currentStep >= 2"
+            [class.bg-gray-200]="currentStep < 2"
+          >
+            2
+          </span>
+          Payment
+        </li>
+      </ol>
+    </div>
+
+    <div class="lg:flex lg:gap-8">
+      <!-- Main Content -->
+      <div class="w-full lg:max-w-2xl xl:max-w-3xl">
+        <!-- Step 1: Shipping Form -->
+        @if (currentStep === 1) {
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+
+          <form [formGroup]="shippingForm" (ngSubmit)="onSubmitShipping()" class="space-y-6">
+            <!-- Full Name -->
+            <div>
+              <label for="fullName" class="block mb-2 text-sm font-medium text-gray-900">
+                Full Name <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                formControlName="fullName"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                [class.border-red-500]="isFieldInvalid('fullName')"
+                placeholder="John Doe"
+              />
+              @if (isFieldInvalid('fullName')) {
+              <p class="mt-1 text-sm text-red-500">{{ getFieldError('fullName') }}</p>
+              }
+            </div>
+
+            <!-- Email & Phone -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">
+                  Email <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                  [class.border-red-500]="isFieldInvalid('email')"
+                  placeholder="john@example.com"
+                />
+                @if (isFieldInvalid('email')) {
+                <p class="mt-1 text-sm text-red-500">{{ getFieldError('email') }}</p>
+                }
+              </div>
+              <div>
+                <label for="phone" class="block mb-2 text-sm font-medium text-gray-900">
+                  Phone Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  formControlName="phone"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                  [class.border-red-500]="isFieldInvalid('phone')"
+                  placeholder="+1 (555) 123-4567"
+                />
+                @if (isFieldInvalid('phone')) {
+                <p class="mt-1 text-sm text-red-500">{{ getFieldError('phone') }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div>
+              <label for="address" class="block mb-2 text-sm font-medium text-gray-900">
+                Street Address <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="address"
+                formControlName="address"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                [class.border-red-500]="isFieldInvalid('address')"
+                placeholder="123 Main Street, Apt 4B"
+              />
+              @if (isFieldInvalid('address')) {
+              <p class="mt-1 text-sm text-red-500">{{ getFieldError('address') }}</p>
+              }
+            </div>
+
+            <!-- City, State, ZIP -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              <div>
+                <label for="city" class="block mb-2 text-sm font-medium text-gray-900">
+                  City <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="city"
+                  formControlName="city"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                  [class.border-red-500]="isFieldInvalid('city')"
+                  placeholder="New York"
+                />
+                @if (isFieldInvalid('city')) {
+                <p class="mt-1 text-sm text-red-500">{{ getFieldError('city') }}</p>
+                }
+              </div>
+              <div>
+                <label for="state" class="block mb-2 text-sm font-medium text-gray-900">
+                  State <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="state"
+                  formControlName="state"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                  [class.border-red-500]="isFieldInvalid('state')"
+                  placeholder="NY"
+                />
+                @if (isFieldInvalid('state')) {
+                <p class="mt-1 text-sm text-red-500">{{ getFieldError('state') }}</p>
+                }
+              </div>
+              <div>
+                <label for="zipCode" class="block mb-2 text-sm font-medium text-gray-900">
+                  ZIP Code <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="zipCode"
+                  formControlName="zipCode"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+                  [class.border-red-500]="isFieldInvalid('zipCode')"
+                  placeholder="10001"
+                />
+                @if (isFieldInvalid('zipCode')) {
+                <p class="mt-1 text-sm text-red-500">{{ getFieldError('zipCode') }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- Country -->
+            <div>
+              <label for="country" class="block mb-2 text-sm font-medium text-gray-900">
+                Country <span class="text-red-500">*</span>
+              </label>
+              <select
+                id="country"
+                formControlName="country"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 block w-full p-2.5"
+              >
+                <option value="United States">United States</option>
+                <option value="Canada">Canada</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Australia">Australia</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+              </select>
+            </div>
+
+            <div class="flex justify-between pt-4">
+              <a
+                routerLink="/cart"
+                class="text-gray-500 hover:text-gray-700 inline-flex items-center gap-2 text-sm font-medium"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Cart
+              </a>
+              <button
+                type="submit"
+                class="bg-yellow-400 hover:bg-yellow-500 text-white font-medium rounded-lg text-sm px-6 py-3 focus:ring-4 focus:ring-yellow-200 inline-flex items-center gap-2"
+              >
+                Continue to Payment
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+        }
+
+        <!-- Step 2: Payment -->
+        @if (currentStep === 2) {
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Payment Method</h2>
+
+          <!-- Shipping Summary -->
+          @if (state.shippingInfo) {
+          <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-gray-900">Shipping to:</p>
+                <p class="text-sm text-gray-600">{{ state.shippingInfo.fullName }}</p>
+                <p class="text-sm text-gray-600">{{ state.shippingInfo.address }}</p>
+                <p class="text-sm text-gray-600">
+                  {{ state.shippingInfo.city }}, {{ state.shippingInfo.state }} {{ state.shippingInfo.zipCode }}
+                </p>
+                <p class="text-sm text-gray-600">{{ state.shippingInfo.country }}</p>
+              </div>
+              <button
+                type="button"
+                (click)="goToStep(1)"
+                class="text-yellow-500 hover:text-yellow-600 text-sm font-medium"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+          }
+
+          <!-- Payment Options -->
+          <div class="space-y-4">
+            <p class="text-sm text-gray-600 mb-4">
+              This is a demo checkout. Click "Complete Order" to simulate a successful payment.
+            </p>
+
+            <!-- Demo Credit Card Display -->
+            <div class="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white">
+              <div class="flex justify-between items-start mb-8">
+                <div class="text-xs opacity-75">Demo Card</div>
+                <svg class="w-10 h-10" viewBox="0 0 48 48" fill="currentColor">
+                  <circle cx="18" cy="24" r="12" fill="#EB001B" opacity="0.8"/>
+                  <circle cx="30" cy="24" r="12" fill="#F79E1B" opacity="0.8"/>
+                </svg>
+              </div>
+              <div class="text-lg tracking-widest mb-4">•••• •••• •••• 4242</div>
+              <div class="flex justify-between text-xs">
+                <div>
+                  <div class="opacity-75">Card Holder</div>
+                  <div>DEMO USER</div>
+                </div>
+                <div>
+                  <div class="opacity-75">Expires</div>
+                  <div>12/28</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Message -->
+            @if (state.error) {
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-sm text-red-600">{{ state.error }}</p>
+            </div>
+            }
+          </div>
+
+          <div class="flex justify-between pt-6 mt-6 border-t border-gray-200">
+            <button
+              type="button"
+              (click)="goToStep(1)"
+              class="text-gray-500 hover:text-gray-700 inline-flex items-center gap-2 text-sm font-medium"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              Back to Shipping
+            </button>
+            <button
+              type="button"
+              (click)="processPayment()"
+              [disabled]="state.isProcessing"
+              class="bg-yellow-400 hover:bg-yellow-500 disabled:bg-yellow-200 disabled:cursor-not-allowed text-white font-medium rounded-lg text-sm px-6 py-3 focus:ring-4 focus:ring-yellow-200 inline-flex items-center gap-2"
+            >
+              @if (state.isProcessing) {
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Processing...
+              } @else {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              Complete Order
+              }
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Order Summary Sidebar -->
+      <div class="mt-8 lg:mt-0 lg:w-full lg:max-w-md">
+        <div class="sticky top-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+
+          <!-- Cart Items -->
+          <div class="max-h-64 overflow-y-auto space-y-4 mb-4">
+            @for (item of state.cartProducts; track item.product.id) {
+            <div class="flex gap-4">
+              <div class="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-100 overflow-hidden">
+                <img
+                  [src]="item.product.urlImg"
+                  [alt]="item.product.name"
+                  class="w-full h-full object-contain"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-medium text-gray-900 truncate">{{ item.product.name }}</h4>
+                <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+                <p class="text-sm font-medium text-gray-900">{{ item.product.price * item.quantity | tndCurrency }}</p>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Divider -->
+          <hr class="border-gray-200 my-4" />
+
+          <!-- Gift Card Section -->
+          <div class="mb-4">
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Do you have a voucher or gift card?</h3>
+            @if (state.appliedGiftCard) {
+            <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div>
+                <p class="text-sm font-medium text-green-800">Gift card applied!</p>
+                <p class="text-xs text-green-600 font-mono">{{ state.appliedGiftCard.code }}</p>
+              </div>
+              <button
+                type="button"
+                (click)="removeGiftCard()"
+                class="text-red-500 hover:text-red-700 text-sm font-medium"
+              >
+                Remove
+              </button>
+            </div>
+            } @else {
+            <div class="flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="giftCardCode"
+                placeholder="Enter gift card code"
+                class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-400 focus:border-yellow-400 p-2 font-mono uppercase"
+                [disabled]="isApplyingGiftCard"
+              />
+              <button
+                type="button"
+                (click)="applyGiftCard()"
+                [disabled]="isApplyingGiftCard || !giftCardCode.trim()"
+                class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg focus:ring-4 focus:ring-yellow-200"
+              >
+                @if (isApplyingGiftCard) {
+                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                } @else {
+                Apply
+                }
+              </button>
+            </div>
+            @if (giftCardMessage) {
+            <p
+              class="mt-2 text-sm"
+              [class.text-green-600]="giftCardMessage.type === 'success'"
+              [class.text-red-600]="giftCardMessage.type === 'error'"
+            >
+              {{ giftCardMessage.text }}
+            </p>
+            }
+            }
+          </div>
+
+          <hr class="border-gray-200 my-4" />
+
+          <!-- Totals -->
+          <div class="space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Subtotal</span>
+              <span class="text-gray-900">{{ state.subtotal | tndCurrency }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Shipping</span>
+              <span class="text-gray-900">
+                @if (state.shipping === 0) {
+                <span class="text-green-600">Free</span>
+                } @else {
+                {{ state.shipping | tndCurrency }}
+                }
+              </span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Tax (8%)</span>
+              <span class="text-gray-900">{{ state.tax | tndCurrency }}</span>
+            </div>
+            @if (state.giftCardDiscount > 0) {
+            <div class="flex justify-between text-sm">
+              <span class="text-green-600">Gift Card Discount</span>
+              <span class="text-green-600">-{{ state.giftCardDiscount | tndCurrency }}</span>
+            </div>
+            }
+            <hr class="border-gray-200" />
+            <div class="flex justify-between">
+              <span class="text-base font-semibold text-gray-900">Total</span>
+              <span class="text-base font-semibold text-gray-900">{{ state.total | tndCurrency }}</span>
+            </div>
+          </div>
+
+          <!-- Free Shipping Notice -->
+          @if (state.shipping > 0) {
+          <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+            <p class="text-sm text-yellow-800">
+              <span class="font-medium">Free shipping</span> on orders over TND 100.00!
+              Add {{ 100 - state.subtotal | tndCurrency }} more to qualify.
+            </p>
+          </div>
+          }
+
+          <!-- Security Badge -->
+          <div class="mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Secure Checkout</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </section>
+</main>

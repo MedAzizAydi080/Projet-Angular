@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "flowbite/src/themes/default";
+@import "leaflet/dist/leaflet.css";
 @plugin "flowbite/plugin";
 @plugin "flowbite-typography";
 @source "../node_modules/flowbite";

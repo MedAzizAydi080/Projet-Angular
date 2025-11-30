@@ -1,0 +1,88 @@
+<main class="p-6 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-950 mb-8">My Favorites</h1>
+
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="animate-pulse bg-white rounded-md border border-gray-300 p-6">
+            <div class="bg-gray-200 h-24 w-24 mx-auto rounded mb-8"></div>
+            <div class="bg-gray-200 h-4 w-3/4 rounded mb-2"></div>
+            <div class="bg-gray-200 h-4 w-1/2 rounded mb-2"></div>
+            <div class="bg-gray-200 h-6 w-1/3 rounded"></div>
+          </div>
+        }
+      </div>
+    } @else if (favorites().length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <svg class="w-24 h-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">No favorites yet</h2>
+        <p class="text-gray-500 max-w-md mb-6">
+          Start adding products to your favorites by clicking the heart icon on any product page.
+        </p>
+        <a routerLink="/" class="bg-gray-950 text-white px-6 py-3 rounded-md hover:bg-gray-800 transition-colors">
+          Browse Products
+        </a>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @for (product of favorites(); track product.id) {
+          <div class="relative shadow-md bg-white rounded-md border border-gray-300 p-6 flex flex-col items-center mx-auto transition-transform hover:scale-105">
+            <!-- Remove from favorites button -->
+            <button
+              (click)="removeFromFavorites(product.id)"
+              class="absolute top-3 right-3 p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+              title="Remove from favorites"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+            
+            <a [routerLink]="['/products', product.id]" class="w-full flex flex-col items-center">
+              <div class="relative size-24 mb-8 items-center">
+                <img
+                  class="object-contain object-center"
+                  [src]="product.urlImg"
+                  [alt]="product.name"
+                />
+              </div>
+              <div class="flex flex-col mt-4 self-start gap-1 w-full">
+                <h4 class="font-bold text-gray-950 text-base md:text-lg text-pretty">
+                  {{ product.name }}
+                </h4>
+                <div class="flex gap-2">
+                  <div class="flex items-center gap-1">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <svg
+                        class="size-4 text-yellow-300"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 576 512"
+                      >
+                        <path
+                          d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
+                        />
+                      </svg>
+                    }
+                  </div>
+                  <p class="border-l border-gray-500 text-gray-500 ps-2 text-sm">
+                    {{ product.reviews }} reviews
+                  </p>
+                </div>
+                <div class="flex items-baseline gap-1 font-bold">
+                  <span class="text-gray-950 text-2xl">{{ product.price | tndCurrency }}</span>
+                  @if (product.previousPrice) {
+                    <span class="text-sm line-through text-gray-500">{{ product.previousPrice | tndCurrency }}</span>
+                  }
+                </div>
+              </div>
+            </a>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</main>

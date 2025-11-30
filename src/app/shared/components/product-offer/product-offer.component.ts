@@ -1,11 +1,12 @@
-import { CurrencyPipe, PercentPipe } from '@angular/common';
+import { PercentPipe } from '@angular/common';
 import { Component, input, OnInit } from '@angular/core';
 import { Product } from '../../models/product';
 import { RouterLink } from '@angular/router';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 
 @Component({
   selector: 'app-product-offer',
-  imports: [CurrencyPipe, PercentPipe, RouterLink],
+  imports: [TndCurrencyPipe, PercentPipe, RouterLink],
   templateUrl: './product-offer.component.html',
 })
 export class ProductOfferComponent implements OnInit {

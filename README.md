@@ -1,6 +1,6 @@
-# Amazon Frontend
+# SfaxStore
 
-A modern e-commerce frontend application built with Angular 19, inspired by Amazon's user interface. This project provides a comprehensive shopping experience with product browsing, cart management, and checkout functionality.
+A modern e-commerce frontend application built with Angular 19. This project provides a comprehensive shopping experience with product browsing, cart management, and checkout functionality.
 
 ## 🚀 Features
 
@@ -31,7 +31,7 @@ A modern e-commerce frontend application built with Angular 19, inspired by Amaz
 
    ```bash
    git clone https://github.com/enzocandido/angular-ecommerce.git
-   cd amazon-frontend
+   cd sfaxstore
    ```
 
 2. Install dependencies:
@@ -90,9 +90,7 @@ This will generate optimized static files in the `dist/` directory that can be d
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🙏 Acknowledgments
 
 ## 🙏 Acknowledgments
 

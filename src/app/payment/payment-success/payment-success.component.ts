@@ -12,9 +12,20 @@ export class PaymentSuccessComponent implements OnInit {
   private readonly purchaseService = inject(PurchaseService);
 
   ngOnInit(): void {
-    const cartProducts: CartProduct[] = JSON.parse(
-      localStorage.getItem('cart-products') as string
-    );
+    const cartProductsJson = localStorage.getItem('cart-products');
+    
+    // Handle case where cart is already cleared (page refresh after checkout)
+    if (!cartProductsJson) {
+      console.log('Cart already cleared - purchase was processed');
+      return;
+    }
+
+    const cartProducts: CartProduct[] = JSON.parse(cartProductsJson);
+    
+    if (!cartProducts || cartProducts.length === 0) {
+      console.log('No products in cart');
+      return;
+    }
 
     const mappedProducts = cartProducts.map(({ quantity, product }) => {
       return {
@@ -33,8 +44,10 @@ export class PaymentSuccessComponent implements OnInit {
       next: () => {
         console.log('Purchase saved successfully');
       },
-      error: () => {
-        // -> redirect
+      error: (err) => {
+        console.error('Failed to save purchase:', err);
+        // In a real app, you might want to store the failed purchase
+        // and retry later or notify the user
       },
     });
   }
